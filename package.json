@@ -10,10 +10,35 @@
     "Other"
   ],
   "activationEvents": [
-    "onLanguage:python"
+    "onStartupFinished"
 ],
   "main": "./out/extension.js",
- "contributes": {
+"contributes": {
+  "commands": [
+    {
+      "command": "code-sound.chooseSuccessSound",
+      "title": "Code Sound: Choose Success Sound"
+    },
+    {
+      "command": "code-sound.chooseErrorSound",
+      "title": "Code Sound: Choose Error Sound"
+    }
+  ],
+  "configuration": {
+    "title": "Code Sound",
+    "properties": {
+      "codeSound.successSound": {
+        "type": "string",
+        "default": "",
+        "description": "Path to a custom sound file for successful code execution."
+      },
+      "codeSound.errorSound": {
+        "type": "string",
+        "default": "",
+        "description": "Path to a custom sound file for failed code execution."
+      }
+    }
+  }
 },
   "scripts": {
     "vscode:prepublish": "npm run compile",
