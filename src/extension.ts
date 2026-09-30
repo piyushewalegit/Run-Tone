@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import { exec } from 'child_process';
 
 export function activate(context: vscode.ExtensionContext) {
-    // choose mrthod
+    // choose method
     const chooseSuccessSound =
     vscode.commands.registerCommand(
         'code-sound.chooseSuccessSound',
@@ -154,7 +154,7 @@ if (activeEditor) {
 
 
 /**
- * Plays a sound for a maximum of 5 seconds.
+ * Plays a sound for a maximum of 8 seconds.
  */
 function playSound(
     context: vscode.ExtensionContext,
@@ -226,7 +226,7 @@ function playSound(
         `Add-Type -AssemblyName presentationCore; ` +
         `$player = New-Object System.Media.SoundPlayer '${escapedPath}'; ` +
         `$player.Play(); ` +
-        `Start-Sleep -Seconds 5; ` +
+        `Start-Sleep -Seconds 8; ` +
         `$player.Stop();`;
 
     const command =
