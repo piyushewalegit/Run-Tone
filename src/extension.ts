@@ -11,7 +11,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     const chooseSuccessSound =
         vscode.commands.registerCommand(
-            'code-sound.chooseSuccessSound',
+            'RunTone.chooseSuccessSound',
             async () => {
 
                 const file =
@@ -30,7 +30,7 @@ export function activate(context: vscode.ExtensionContext) {
                 const soundPath = file[0].fsPath;
 
                 await vscode.workspace
-                    .getConfiguration('codeSound')
+                    .getConfiguration('RunTone')
                     .update(
                         'successSound',
                         soundPath,
@@ -38,7 +38,7 @@ export function activate(context: vscode.ExtensionContext) {
                     );
 
                 vscode.window.showInformationMessage(
-                    'Code Sound: Success sound updated!'
+                    'RunTone: Success sound updated!'
                 );
             }
         );
@@ -50,7 +50,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     const chooseErrorSound =
         vscode.commands.registerCommand(
-            'code-sound.chooseErrorSound',
+            'RunTone.chooseErrorSound',
             async () => {
 
                 const file =
@@ -69,7 +69,7 @@ export function activate(context: vscode.ExtensionContext) {
                 const soundPath = file[0].fsPath;
 
                 await vscode.workspace
-                    .getConfiguration('codeSound')
+                    .getConfiguration('RunTone')
                     .update(
                         'errorSound',
                         soundPath,
@@ -77,7 +77,7 @@ export function activate(context: vscode.ExtensionContext) {
                     );
 
                 vscode.window.showInformationMessage(
-                    'Code Sound: Error sound updated!'
+                    'RunTone: Error sound updated!'
                 );
             }
         );
@@ -103,10 +103,10 @@ export function activate(context: vscode.ExtensionContext) {
                 const exitCode =
     event.exitCode;
 
-// Check whether Code Sound is enabled
+// Check whether RunTone is enabled
 const enabled =
     vscode.workspace
-        .getConfiguration('codeSound')
+        .getConfiguration('RunTone')
         .get<boolean>('enabled', true);
 
 if (!enabled) {
@@ -184,7 +184,7 @@ function playSound(
 ) {
 
     const config =
-        vscode.workspace.getConfiguration('codeSound');
+        vscode.workspace.getConfiguration('RunTone');
 
     const settingName =
         soundType === 'success'
@@ -234,7 +234,7 @@ function playSound(
     if (!fs.existsSync(soundPath)) {
 
         vscode.window.showErrorMessage(
-            `Code Sound: Sound file not found.`
+            `RunTone: Sound file not found.`
         );
 
         return;

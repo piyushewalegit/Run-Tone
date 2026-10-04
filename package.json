@@ -1,7 +1,14 @@
 {
-  "name": "code-sound",
-  "displayName": "Code Sound",
-  "description": "Play sounds when Python code succeeds or fails",
+  "name": "runtone",
+  "displayName": "RunTone",
+  "description": "Play sounds when code succeeds or fails",
+  "publisher": "j0yb0y",
+  "icon": "icon.png",
+  "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+  "type": "git",
+  "url": "https://github.com/piyushewalegit/Run-Tone.git"
+},
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.137.0"
@@ -16,28 +23,28 @@
 "contributes": {
   "commands": [
     {
-      "command": "code-sound.chooseSuccessSound",
-      "title": "Code Sound: Choose Success Sound"
+      "command": "RunTone.chooseSuccessSound",
+      "title": "RunTone: Choose Success Sound"
     },
     {
-      "command": "code-sound.chooseErrorSound",
-      "title": "Code Sound: Choose Error Sound"
+      "command": "RunTone.chooseErrorSound",
+      "title": "RunTone: Choose Error Sound"
     }
   ],
   "configuration": {
-    "title": "Code Sound",
+    "title": "RunTone",
     "properties": {
-      "codeSound.enabled": {
+      "RunTone.enabled": {
   "type": "boolean",
   "default": true,
-  "description": "Enable or disable Code Sound."
+  "description": "Enable or disable RunTone."
 },
-      "codeSound.successSound": {
+      "RunTone.successSound": {
         "type": "string",
         "default": "",
         "description": "Path to a custom sound file for successful code execution."
       },
-      "codeSound.errorSound": {
+      "RunTone.errorSound": {
         "type": "string",
         "default": "",
         "description": "Path to a custom sound file for failed code execution."

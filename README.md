@@ -1,71 +1,77 @@
-# code-sound README
+# RunTone
 
-This is the README for your extension "code-sound". After writing up a brief description, we recommend including the following sections.
+RunTone is a VS Code extension that plays a sound when your code finishes executing.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- 🔊 Success sound when code executes successfully
+- ❌ Error sound when code execution fails
+- 🎵 Choose your own `.wav` success and error sounds
+- ⏱️ Sounds play for a maximum of 5 seconds
+- 🌍 Works with multiple programming languages
+- 🔘 Enable or disable RunTone from VS Code Settings
+- 🚫 Ignores unrelated terminal commands such as `npm install`, `git pull`, etc.
 
-For example if there is an image subfolder under your extension project workspace:
+## Custom Sounds
 
-\!\[feature X\]\(images/feature-x.png\)
+You can choose your own `.wav` files using the Command Palette:
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+- `RunTone: Choose Success Sound`
+- `RunTone: Choose Error Sound`
+
+If no custom sound is selected, RunTone uses the default sounds included with the extension.
+
+## Enable / Disable
+
+
+RunTone can be enabled or disabled from:
+
+**Settings → Extensions → RunTone**
+
+Setting:
+
+```text
+codeSound.enabled
+
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+RunTone uses VS Code Terminal Shell Integration to detect completed code execution.
 
-## Extension Settings
+Make sure this setting is enabled:
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+terminal.integrated.shellIntegration.enabled
+Supported Audio
 
-For example:
+Custom sounds currently support:
 
-This extension contributes the following settings:
+.wav
+Playback Duration
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+Sounds automatically stop after a maximum of 5 seconds.
 
-## Known Issues
+## How It Works
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+RunTone monitors completed terminal executions and checks whether the executed command corresponds to the currently active source file.
 
-## Release Notes
+It then plays:
 
-Users appreciate release notes as you update your extension.
+✅ Success sound → exit code 0
+❌ Error sound → non-zero exit code
+## Attribution
 
-### 1.0.0
+RunTone is created by Piyush Shewale.
 
-Initial release of ...
+You are free to use, modify, and distribute this project under the MIT License.
 
-### 1.0.1
+If you use or modify RunTone in another project, attribution to the original project and author is appreciated.
 
-Fixed issue #.
+Original project:
 
-### 1.1.0
+https://github.com/piyushewalegit/Run-Tone
 
-Added features X, Y, and Z.
 
----
 
-## Following extension guidelines
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+## License
+MIT License
