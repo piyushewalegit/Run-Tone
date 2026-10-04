@@ -4,157 +4,179 @@ import * as fs from 'fs';
 import { exec } from 'child_process';
 
 export function activate(context: vscode.ExtensionContext) {
-    // choose method
+
+    // ---------------------------------------
+    // Choose custom success sound
+    // ---------------------------------------
+
     const chooseSuccessSound =
-    vscode.commands.registerCommand(
-        'code-sound.chooseSuccessSound',
-        async () => {
+        vscode.commands.registerCommand(
+            'code-sound.chooseSuccessSound',
+            async () => {
 
-            const file = await vscode.window.showOpenDialog({
-                canSelectMany: false,
-                openLabel: 'Choose Success Sound',
-                filters: {
-                    'WAV Audio': ['wav']
+                const file =
+                    await vscode.window.showOpenDialog({
+                        canSelectMany: false,
+                        openLabel: 'Choose Success Sound',
+                        filters: {
+                            'WAV Audio': ['wav']
+                        }
+                    });
+
+                if (!file || file.length === 0) {
+                    return;
                 }
-            });
 
-            if (!file || file.length === 0) {
-                return;
-            }
+                const soundPath = file[0].fsPath;
 
-            const soundPath = file[0].fsPath;
+                await vscode.workspace
+                    .getConfiguration('codeSound')
+                    .update(
+                        'successSound',
+                        soundPath,
+                        vscode.ConfigurationTarget.Global
+                    );
 
-            await vscode.workspace
-                .getConfiguration('codeSound')
-                .update(
-                    'successSound',
-                    soundPath,
-                    vscode.ConfigurationTarget.Global
+                vscode.window.showInformationMessage(
+                    'Code Sound: Success sound updated!'
                 );
+            }
+        );
 
-            vscode.window.showInformationMessage(
-                'Code Sound: Success sound updated!'
-            );
-        }
+
+    // ---------------------------------------
+    // Choose custom error sound
+    // ---------------------------------------
+
+    const chooseErrorSound =
+        vscode.commands.registerCommand(
+            'code-sound.chooseErrorSound',
+            async () => {
+
+                const file =
+                    await vscode.window.showOpenDialog({
+                        canSelectMany: false,
+                        openLabel: 'Choose Error Sound',
+                        filters: {
+                            'WAV Audio': ['wav']
+                        }
+                    });
+
+                if (!file || file.length === 0) {
+                    return;
+                }
+
+                const soundPath = file[0].fsPath;
+
+                await vscode.workspace
+                    .getConfiguration('codeSound')
+                    .update(
+                        'errorSound',
+                        soundPath,
+                        vscode.ConfigurationTarget.Global
+                    );
+
+                vscode.window.showInformationMessage(
+                    'Code Sound: Error sound updated!'
+                );
+            }
+        );
+
+
+    context.subscriptions.push(
+        chooseSuccessSound,
+        chooseErrorSound
     );
 
 
-const chooseErrorSound =
-    vscode.commands.registerCommand(
-        'code-sound.chooseErrorSound',
-        async () => {
-
-            const file = await vscode.window.showOpenDialog({
-                canSelectMany: false,
-                openLabel: 'Choose Error Sound',
-                filters: {
-                    'WAV Audio': ['wav']
-                }
-            });
-
-            if (!file || file.length === 0) {
-                return;
-            }
-
-            const soundPath = file[0].fsPath;
-
-            await vscode.workspace
-                .getConfiguration('codeSound')
-                .update(
-                    'errorSound',
-                    soundPath,
-                    vscode.ConfigurationTarget.Global
-                );
-
-            vscode.window.showInformationMessage(
-                'Code Sound: Error sound updated!'
-            );
-        }
-    );
-
-context.subscriptions.push(
-    chooseSuccessSound,
-    chooseErrorSound
-);
-//^ added choose method
-
-    console.log('Code Sound extension is active.');
+    // ---------------------------------------
+    // Terminal execution listener
+    // ---------------------------------------
 
     const terminalListener =
-    vscode.window.onDidEndTerminalShellExecution((event) => {
+        vscode.window.onDidEndTerminalShellExecution(
+            (event) => {
 
-        const command = event.execution.commandLine.value;
-        const exitCode = event.exitCode;
+                const command =
+                    event.execution.commandLine.value;
 
-        console.log('--------------------------------');
-        console.log(`Command finished: ${command}`);
-        console.log(`Exit code: ${exitCode}`);
+                const exitCode =
+    event.exitCode;
 
-        // Ignore commands where VS Code could not provide an exit code
-        if (exitCode === undefined) {
-            return;
-        }
+// Check whether Code Sound is enabled
+const enabled =
+    vscode.workspace
+        .getConfiguration('codeSound')
+        .get<boolean>('enabled', true);
 
-        // Check whether the command contains a source-code file
-        const activeEditor =
-    vscode.window.activeTextEditor;
-
-let isCodeExecution = false;
-
-if (activeEditor) {
-
-    const activeFileName =
-        path.basename(activeEditor.document.fileName);
-
-    if (activeFileName) {
-
-        isCodeExecution =
-            command
-                .toLowerCase()
-                .includes(activeFileName.toLowerCase());
-    }
+if (!enabled) {
+    return;
 }
 
-        if (!isCodeExecution) {
+// Ignore executions without an exit code
+if (exitCode === undefined) {
+    return;
+}
 
-            console.log('Not a code execution. Ignoring.');
-            console.log('--------------------------------');
+                // Get currently active file
+                const activeEditor =
+                    vscode.window.activeTextEditor;
 
-            return;
-        }
+                let isCodeExecution = false;
 
-        console.log('Code execution detected.');
+                if (activeEditor) {
 
-        // Successful execution
-        if (exitCode === 0) {
+                    const activeFileName =
+                        path.basename(
+                            activeEditor.document.fileName
+                        );
 
-            console.log('Code execution SUCCESS detected.');
+                    if (activeFileName) {
 
-            playSound(
-                context,
-                'success'
-            );
-        }
+                        isCodeExecution =
+                            command
+                                .toLowerCase()
+                                .includes(
+                                    activeFileName.toLowerCase()
+                                );
+                    }
+                }
 
-        // Failed execution
-        else {
+                // Ignore unrelated terminal commands
+                if (!isCodeExecution) {
+                    return;
+                }
 
-            console.log('Code execution ERROR detected.');
+                // Code executed successfully
+                if (exitCode === 0) {
 
-            playSound(
-                context,
-                'error'
-            );
-        }
+                    playSound(
+                        context,
+                        'success'
+                    );
 
-        console.log('--------------------------------');
-    });
+                }
 
+                // Code execution failed
+                else {
+
+                    playSound(
+                        context,
+                        'error'
+                    );
+                }
+            }
+        );
+
+
+    context.subscriptions.push(
+        terminalListener
+    );
 }
 
 
 /**
- * Plays a sound for a maximum of 8 seconds.
+ * Plays the selected sound for a maximum of 5 seconds.
  */
 function playSound(
     context: vscode.ExtensionContext,
@@ -164,30 +186,32 @@ function playSound(
     const config =
         vscode.workspace.getConfiguration('codeSound');
 
+    const settingName =
+        soundType === 'success'
+            ? 'successSound'
+            : 'errorSound';
+
     const customSound =
-        config.get<string>(
-            soundType === 'success'
-                ? 'successSound'
-                : 'errorSound'
-        );
+        config.get<string>(settingName);
 
     let soundPath: string;
 
-    // Use custom sound if selected and still exists
+    // ---------------------------------------
+    // Use custom sound if selected
+    // ---------------------------------------
+
     if (
         customSound &&
         fs.existsSync(customSound)
     ) {
 
         soundPath = customSound;
-
-        console.log(
-            `Using custom ${soundType} sound: ${soundPath}`
-        );
-
     }
 
-    // Otherwise use the default sound
+    // ---------------------------------------
+    // Otherwise use default sound
+    // ---------------------------------------
+
     else {
 
         const defaultSound =
@@ -195,22 +219,19 @@ function playSound(
                 ? 'success.wav'
                 : 'error.wav';
 
-        soundPath = path.join(
-            context.extensionPath,
-            'sounds',
-            defaultSound
-        );
-
-        console.log(
-            `Using default ${soundType} sound: ${soundPath}`
-        );
+        soundPath =
+            path.join(
+                context.extensionPath,
+                'sounds',
+                defaultSound
+            );
     }
 
-    if (!fs.existsSync(soundPath)) {
+    // ---------------------------------------
+    // Check sound file
+    // ---------------------------------------
 
-        console.error(
-            `Sound file not found: ${soundPath}`
-        );
+    if (!fs.existsSync(soundPath)) {
 
         vscode.window.showErrorMessage(
             `Code Sound: Sound file not found.`
@@ -219,14 +240,19 @@ function playSound(
         return;
     }
 
+    // Escape single quotes for PowerShell
     const escapedPath =
         soundPath.replace(/'/g, "''");
+
+    // ---------------------------------------
+    // Play sound for maximum 10 seconds
+    // ---------------------------------------
 
     const powershellCommand =
         `Add-Type -AssemblyName presentationCore; ` +
         `$player = New-Object System.Media.SoundPlayer '${escapedPath}'; ` +
         `$player.Play(); ` +
-        `Start-Sleep -Seconds 8; ` +
+        `Start-Sleep -Seconds 10; ` +
         `$player.Stop();`;
 
     const command =
@@ -241,18 +267,9 @@ function playSound(
                 console.error(
                     `Could not play sound: ${error.message}`
                 );
-
-                return;
             }
-
-            console.log(
-                `Played ${soundType} sound`
-            );
         }
     );
 }
-
-
 export function deactivate() {
-    console.log('Code Sound extension deactivated.');
 }
